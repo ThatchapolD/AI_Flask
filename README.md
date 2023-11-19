@@ -20,9 +20,8 @@
 - **Remarks**
   Flask "werkzeug" cannot import name 'secure_filename' from 'werkzeug'  
   Change from: from werkzeug import secure_filename, FileStorage to
-  ```from werkzeug.utils import secure_filename
-     from werkzeug.datastructures import FileStorage
-  ```
+  `from werkzeug.utils import secure_filename`  
+  `from werkzeug.datastructures import FileStorage`
 
 ### Bank_note_ID id: 0 = 10Gen11, id: 1 = 100Gen11, 2 = 20Gen11, 3 = 5Gen11, 4 = 500Gen11
 
