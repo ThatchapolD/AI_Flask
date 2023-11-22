@@ -117,6 +117,8 @@ def get_Prediction(test_data):
         return result
 
     # print("This is some",Banknote_ID)
+    if len(Banknote_ID) == 0:
+        return "Can't detect Banknotes"
     result = switch_case(Banknote_ID[0])   
     print(result)
 
