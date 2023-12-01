@@ -50,9 +50,9 @@ def upload_image():
             # Send the result back to the app
             # os.remove(file_path)
             return jsonify({"BanknoteID": result},
-                           {"Serial_Number": "6969"},
-                           {"MF_Sig": "LeeKee1"},
-                           {"BOT_Sig": "Leekee2"},
+                           {"Serial_Number": "TBA"},
+                           {"MF_Sig": "TBA"},
+                           {"BOT_Sig": "TBA"},
                            {"Price Estimation": "2mil"})
 
         else:
