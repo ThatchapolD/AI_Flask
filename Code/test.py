@@ -52,8 +52,7 @@ def upload_image():
             return jsonify({"BanknoteID": result},
                            {"Serial_Number": "TBA"},
                            {"MF_Sig": "TBA"},
-                           {"BOT_Sig": "TBA"},
-                           {"Price Estimation": "2mil"})
+                           {"BOT_Sig": "TBA"},)
 
         else:
             print(f"The file '{file_name}' does not exist in the folder.")
