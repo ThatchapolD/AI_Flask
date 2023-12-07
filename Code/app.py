@@ -5,8 +5,8 @@ import os
 # For Image Proc
 from detectron2.config import get_cfg
 from detectron2.engine import DefaultPredictor
-from detectron2.data import MetadataCatalog
-from detectron2.utils.visualizer import Visualizer, ColorMode
+# from detectron2.data import MetadataCatalog
+# from detectron2.utils.visualizer import Visualizer, ColorMode
 import cv2
 
 # Flask stuff
@@ -18,7 +18,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Setting image folder and path
-folder_path = '/Users/td1932/REfolder/Project/AI_Flask /Python_Srcipt/uploads'
+folder_path = '/home/tdubuntu/Desktop/AI_Flask/uploads'
 file_name = 'image.jpg'  # Replace with the name of the file you're checking for
 
 file_path = os.path.join(folder_path, file_name)
@@ -27,6 +27,10 @@ file_path = os.path.join(folder_path, file_name)
 photos = UploadSet("photos", IMAGES)
 app.config["UPLOADED_PHOTOS_DEST"] = "uploads/"
 configure_uploads(app, photos)
+
+@app.route("/test")
+def hello_world():
+    return "Test 123"
 
 @app.route("/uploadimage", methods=["POST"])
 def upload_image():
@@ -45,23 +49,28 @@ def upload_image():
         
         if os.path.isfile(file_path):
             test_data = [{'testpic': file_path}] #input image
-            get_Prediction(test_data)
+            result = get_Prediction(test_data)
+
+            # Send the result back to the app
+            # os.remove(file_path)
+            return jsonify({"BanknoteID": result},
+                           {"Serial_Number": "TBA"},
+                           {"MF_Sig": "TBA"},
+                           {"BOT_Sig": "TBA"},)
+
         else:
             print(f"The file '{file_name}' does not exist in the folder.")
 
-        return jsonify({
-            "message": "Image uploaded successfully.",
-        })
+        # return jsonify({
+        #     "message": "Image uploaded successfully.",
+        # })
 
     return jsonify({"error": "Invalid file type. Only images are allowed."}), 400
 
-def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in {"jpg", "jpeg", "png", "gif"}
-
 def get_Prediction(test_data):
     cfg = get_cfg()
-    cfg.merge_from_file('/Users/td1932/REfolder/Project/AI_Flask /Python_Srcipt/Yaml_and_Friend/config.yml')# path for custom config model
-    cfg.MODEL.WEIGHTS = "/Users/td1932/REfolder/Project/AI_Flask /Python_Srcipt/Yaml_and_Friend/model_final.pth" # path for model
+    cfg.merge_from_file('/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/config.yml')# path for custom config model
+    cfg.MODEL.WEIGHTS = "/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/model_final.pth" # path for model
     predictor = DefaultPredictor(cfg)
     im = cv2.imread(test_data[0]["testpic"])
     if im is not None:
@@ -76,6 +85,7 @@ def get_Prediction(test_data):
 
     # Print class IDs as integers
     Banknote_ID = [class_id.item() for class_id in unique_class_ids]
+    os.remove(file_path)
     # print("IDs of detected instances:", [class_id.item() for class_id in unique_class_ids])# Class_id
 
     def case0():
@@ -110,12 +120,20 @@ def get_Prediction(test_data):
 
         # Call the selected case function
         result = selected_case()
-
+        
         return result
 
-    result = switch_case(Banknote_ID[0])
+    # print("This is some",Banknote_ID)
+    if len(Banknote_ID) == 0:
+        return "Can't detect Banknotes"
+    
+    result = switch_case(Banknote_ID[0])   
     print(result)
-    os.remove(file_path)
+
+    return result
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in {"jpg", "jpeg", "png", "gif"}
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=500, debug=True)
+    app.run(host='0.0.0.0', port=6000)

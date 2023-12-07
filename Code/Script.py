@@ -5,11 +5,11 @@ from detectron2.engine import DefaultPredictor
 from detectron2.data import MetadataCatalog
 from detectron2.utils.visualizer import Visualizer, ColorMode
 import cv2
-test_data = [{'testpic': '/Users/td1932/REfolder/Project/AI_Flask /Python_Srcipt/uploads/image.jpg'}] #input image
+test_data = [{'testpic': '/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/IMG_2660.jpg'}] #input image
 
 cfg = get_cfg()
-cfg.merge_from_file('/Users/td1932/REfolder/Project/AI_Flask /Python_Srcipt/Yaml_and_Friend/config.yml')# path for custom config model
-cfg.MODEL.WEIGHTS = "/Users/td1932/REfolder/Project/AI_Flask /Python_Srcipt/Yaml_and_Friend/model_final.pth" # path for model
+cfg.merge_from_file('/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/config.yml')# path for custom config model
+cfg.MODEL.WEIGHTS = "/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/model_final.pth" # path for model
 predictor = DefaultPredictor(cfg)
 im = cv2.imread(test_data[0]["testpic"])
 if im is not None:
