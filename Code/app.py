@@ -5,8 +5,6 @@ import os
 # For Image Proc
 from detectron2.config import get_cfg
 from detectron2.engine import DefaultPredictor
-# from detectron2.data import MetadataCatalog
-# from detectron2.utils.visualizer import Visualizer, ColorMode
 import cv2
 
 # Flask stuff
@@ -18,14 +16,14 @@ app = Flask(__name__)
 CORS(app)
 
 # Setting image folder and path
-folder_path = '/home/tdubuntu/Desktop/AI_Flask/uploads'
+folder_path = '/Users/td1932/REfolder/Project/AI_Flask/uploads'
 file_name = 'image.jpg'  # Replace with the name of the file you're checking for
 
 file_path = os.path.join(folder_path, file_name)
 
 # Configure the upload settings
 photos = UploadSet("photos", IMAGES)
-app.config["UPLOADED_PHOTOS_DEST"] = "uploads/"
+app.config["UPLOADED_PHOTOS_DEST"] = folder_path
 configure_uploads(app, photos)
 
 @app.route("/test")
@@ -69,8 +67,8 @@ def upload_image():
 
 def get_Prediction(test_data):
     cfg = get_cfg()
-    cfg.merge_from_file('/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/config.yml')# path for custom config model
-    cfg.MODEL.WEIGHTS = "/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/model_final.pth" # path for model
+    cfg.merge_from_file('/Users/td1932/REfolder/Project/AI_Flask/Yaml_and_Friend/config.yml')# path for custom config model
+    cfg.MODEL.WEIGHTS = "/Users/td1932/REfolder/Project/AI_Flask/Yaml_and_Friend/model_final.pth" # path for model
     predictor = DefaultPredictor(cfg)
     im = cv2.imread(test_data[0]["testpic"])
     if im is not None:
