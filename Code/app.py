@@ -1,6 +1,8 @@
 # Bank_note_ID id: 0 = 10Gen11, id: 1 = 100Gen11, 2 = 20Gen11, 3 = 5Gen11, 4 = 500Gen11
 
+# For modifying file
 import os
+import shutil
 
 # For Image Proc
 from detectron2.config import get_cfg
@@ -8,22 +10,19 @@ from detectron2.engine import DefaultPredictor
 import cv2
 
 # Flask stuff
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 from flask_cors import CORS
+import uuid
 
 app = Flask(__name__)
 CORS(app)
+app.config['SECRET_KEY'] = 'secret_key_for_session'
 
 # Setting image folder and path
-folder_path = '/Users/td1932/REfolder/Project/AI_Flask/uploads'
-file_name = 'image.jpg'  # Replace with the name of the file you're checking for
-
-file_path = os.path.join(folder_path, file_name)
-
-# Configure the upload settings
+base_folder_path = '/Users/td1932/REfolder/Project/AI_Flask/uploads'
+app.config["UPLOADED_PHOTOS_DEST"] = base_folder_path
 photos = UploadSet("photos", IMAGES)
-app.config["UPLOADED_PHOTOS_DEST"] = folder_path
 configure_uploads(app, photos)
 
 @app.route("/test")
@@ -41,31 +40,32 @@ def upload_image():
         return jsonify({"error": "No selected file."}), 400
 
     if file and allowed_file(file.filename):
-        filename = photos.save(file)
+        session['user_id'] = str(uuid.uuid4())
+
+        folder_path = os.path.join(base_folder_path, session['user_id'])
+        os.makedirs(folder_path, exist_ok=True)
+
+        file_path = os.path.join(folder_path, file.filename)
+        filename = photos.save(file, folder=session['user_id'])
         size = len(file.read())
-        # Perform any additional processing, such as saving the file path to a database, if needed
         
         if os.path.isfile(file_path):
             test_data = [{'testpic': file_path}] #input image
-            result = get_Prediction(test_data)
+            result = get_Prediction(test_data, file_path)
 
+            remove_user_folder(session['user_id'])
             # Send the result back to the app
-            # os.remove(file_path)
             return jsonify({"BanknoteID": result},
                            {"Serial_Number": "TBA"},
                            {"MF_Sig": "TBA"},
                            {"BOT_Sig": "TBA"},)
 
         else:
-            print(f"The file '{file_name}' does not exist in the folder.")
-
-        # return jsonify({
-        #     "message": "Image uploaded successfully.",
-        # })
+            print(f"The file '{file.filename}' does not exist in the folder.")
 
     return jsonify({"error": "Invalid file type. Only images are allowed."}), 400
 
-def get_Prediction(test_data):
+def get_Prediction(test_data, file_path):
     cfg = get_cfg()
     cfg.merge_from_file('/Users/td1932/REfolder/Project/AI_Flask/Yaml_and_Friend/config.yml')# path for custom config model
     cfg.MODEL.WEIGHTS = "/Users/td1932/REfolder/Project/AI_Flask/Yaml_and_Friend/model_final.pth" # path for model
@@ -129,6 +129,13 @@ def get_Prediction(test_data):
     print(result)
 
     return result
+
+def remove_user_folder(user_id):
+    folder_path = os.path.join(base_folder_path, user_id)
+    if os.path.exists(folder_path):
+        shutil.rmtree(folder_path)
+    else:
+        print(f"The folder for user {user_id} does not exist.")
 
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in {"jpg", "jpeg", "png", "gif"}
