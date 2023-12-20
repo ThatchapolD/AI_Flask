@@ -20,7 +20,7 @@ CORS(app)
 app.config['SECRET_KEY'] = 'secret_key_for_session'
 
 # Setting image folder and path
-base_folder_path = '/Users/td1932/REfolder/Project/AI_Flask/uploads'
+base_folder_path = '/home/tdubuntu/Desktop/AI_Flask/uploads'
 app.config["UPLOADED_PHOTOS_DEST"] = base_folder_path
 photos = UploadSet("photos", IMAGES)
 configure_uploads(app, photos)
@@ -67,8 +67,8 @@ def upload_image():
 
 def get_Prediction(test_data, file_path):
     cfg = get_cfg()
-    cfg.merge_from_file('/Users/td1932/REfolder/Project/AI_Flask/Yaml_and_Friend/config.yml')# path for custom config model
-    cfg.MODEL.WEIGHTS = "/Users/td1932/REfolder/Project/AI_Flask/Yaml_and_Friend/model_final.pth" # path for model
+    cfg.merge_from_file('/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/config.yml')# path for custom config model
+    cfg.MODEL.WEIGHTS = "/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/model_final.pth" # path for model
     predictor = DefaultPredictor(cfg)
     im = cv2.imread(test_data[0]["testpic"])
     if im is not None:
