@@ -1,4 +1,4 @@
 detectron2/
 venv/
 Yaml_and_Friend/model_finetune.pth  
-
+__pycache__
