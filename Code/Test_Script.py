@@ -3,7 +3,7 @@ from detectron2.engine import DefaultPredictor
 import cv2
 from class_Mapper import ClassMapper
 
-test_data = [{'testpic':"/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/IMG_2433.jpg"}]#input
+test_data = [{'testpic':"/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/IMG_2566.jpg"}]#input
 
 cfg = get_cfg()
 cfg.merge_from_file("/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/config_finetune.yml")

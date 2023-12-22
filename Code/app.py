@@ -8,6 +8,7 @@ import shutil
 from detectron2.config import get_cfg
 from detectron2.engine import DefaultPredictor
 import cv2
+from class_Mapper import ClassMapper
 
 # Flask stuff
 from flask import Flask, request, jsonify, session
@@ -53,6 +54,7 @@ def upload_image():
             test_data = [{'testpic': file_path}] #input image
             result = get_Prediction(test_data, file_path)
 
+            print(result)
             remove_user_folder(session['user_id'])
             # Send the result back to the app
             return jsonify({"BanknoteID": result},
@@ -67,68 +69,34 @@ def upload_image():
 
 def get_Prediction(test_data, file_path):
     cfg = get_cfg()
-    cfg.merge_from_file('/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/config.yml')# path for custom config model
-    cfg.MODEL.WEIGHTS = "/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/model_final.pth" # path for model
+    cfg.merge_from_file("/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/config_finetune.yml")
+    cfg.MODEL.WEIGHTS = "/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/model_finetune.pth"
     predictor = DefaultPredictor(cfg)
+
     im = cv2.imread(test_data[0]["testpic"])
     if im is not None:
-        new_width = 640  
+        new_width = 640
         new_height = 640
         resized_image = cv2.resize(im, (new_width, new_height))
+
     outputs = predictor(resized_image)
-    
-    # Access the class IDs of detected instances
     class_ids = outputs["instances"].pred_classes
-    unique_class_ids = set(class_ids)
 
-    # Print class IDs as integers
-    Banknote_ID = [class_id.item() for class_id in unique_class_ids]
+    #Calling class_mapper class to sort the id into name
+    class_mapper = ClassMapper()
+
+    mapped_result = class_mapper.map_classes(class_ids)
+
+    #Removed file after image processing is comeplete
     os.remove(file_path)
-    # print("IDs of detected instances:", [class_id.item() for class_id in unique_class_ids])# Class_id
-
-    def case0():
-        return "10Gen11"
-
-    def case1():
-        return "100Gen11"
-
-    def case2():
-        return "20Gen11"
-    
-    def case3():
-        return "5Gen11"
-    
-    def case4():
-        return "500Gen11"
-
-    def default():
-        return "Error something's wrong"
-
-    def switch_case(case_value):
-        switch_dict = {
-            0: case0,
-            1: case1,
-            2: case2,
-            3: case3,
-            4: case4
-        }
-
-        # Use get() with a default function to handle the default case
-        selected_case = switch_dict.get(case_value, default)
-
-        # Call the selected case function
-        result = selected_case()
-        
-        return result
 
     # print("This is some",Banknote_ID)
-    if len(Banknote_ID) == 0:
+    if mapped_result == None:
         return "Can't detect Banknotes"
-    
-    result = switch_case(Banknote_ID[0])   
-    print(result)
 
-    return result
+    # print(mapped_result)
+
+    return mapped_result
 
 def remove_user_folder(user_id):
     folder_path = os.path.join(base_folder_path, user_id)
