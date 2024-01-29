@@ -1,5 +1,3 @@
-# Bank_note_ID id: 0 = 10Gen11, id: 1 = 100Gen11, 2 = 20Gen11, 3 = 5Gen11, 4 = 500Gen11
-
 # For modifying file
 import os
 import shutil
@@ -87,16 +85,18 @@ def get_Prediction(test_data, file_path):
 
     mapped_result = class_mapper.map_classes(class_ids)
 
-    #Removed file after image processing is comeplete
-    os.remove(file_path)
-
     # print("This is some",Banknote_ID)
     if mapped_result == None:
+        #Removed file after image processing is comeplete
+        os.remove(file_path)
+        
         return "Can't detect Banknotes"
 
-    # print(mapped_result)
-
-    return mapped_result
+    else: 
+        #Removed file after image processing is comeplete
+        os.remove(file_path)
+        
+        return mapped_result
 
 def remove_user_folder(user_id):
     folder_path = os.path.join(base_folder_path, user_id)

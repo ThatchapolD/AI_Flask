@@ -23,6 +23,6 @@
   `from werkzeug.utils import secure_filename`  
   `from werkzeug.datastructures import FileStorage`
 
-### Bank_note_ID id: 0 = 10Gen11, id: 1 = 100Gen11, 2 = 20Gen11, 3 = 5Gen11, 4 = 500Gen11
+### Bank_note_ID will always start with value then generation series Ex. 5Gen11 means 5 baht gen 11
 
 ### Model.pth,config.yml should be along with test picture in Yaml_and_Friend
