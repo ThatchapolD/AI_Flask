@@ -1,26 +1,25 @@
-from detectron2.config import get_cfg
-from detectron2.engine import DefaultPredictor
-import cv2
+from ultralytics import YOLO
 from class_Mapper import ClassMapper
 
-test_data = [{'testpic':"/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/IMG_2566.jpg"}]#input
+model = YOLO("/home/tdubuntu/Desktop/AI_Flask/YoloV8_Model/best.pt")  #model
+results = model('/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/IMG_2660.jpg')  #input from app
 
-cfg = get_cfg()
-cfg.merge_from_file("/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/config_finetune.yml")
-cfg.MODEL.WEIGHTS = "/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/model_finetune.pth"
-predictor = DefaultPredictor(cfg)
-
-im = cv2.imread(test_data[0]["testpic"])
-if im is not None:
-    new_width = 640
-    new_height = 640
-    resized_image = cv2.resize(im, (new_width, new_height))
-
-outputs = predictor(resized_image)
-class_ids = outputs["instances"].pred_classes
+result = results[0]
+box = result.boxes[0]
+class_id = box.cls[0].item()
+# print("Class Item: ", round(class_id))
 
 #Calling class_mapper class to sort the id into name
 class_mapper = ClassMapper()
 
-mapped_result = class_mapper.map_classes(class_ids)
-print(mapped_result)
+mapped_result = class_mapper.map_classes(round(class_id))
+print("The Result: ", mapped_result)
+
+# len(result.boxes)
+# cords = box.xyxy[0].tolist()
+# conf = box.conf[0].item()
+# cords = box.xyxy[0].tolist()
+# cords = [round(x) for x in cords]
+# class_id = result.names[box.cls[0].item()]# output to app 
+# conf = round(box.conf[0].item(), 2)
+# print("Object type:", class_id)
