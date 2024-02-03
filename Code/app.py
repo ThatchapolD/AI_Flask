@@ -3,9 +3,7 @@ import os
 import shutil
 
 # For Image Proc
-from detectron2.config import get_cfg
-from detectron2.engine import DefaultPredictor
-import cv2
+from ultralytics import YOLO
 from class_Mapper import ClassMapper
 
 # Flask stuff
@@ -49,8 +47,8 @@ def upload_image():
         size = len(file.read())
         
         if os.path.isfile(file_path):
-            test_data = [{'testpic': file_path}] #input image
-            result = get_Prediction(test_data, file_path)
+            # test_data = [{'testpic': file_path}] #input image
+            result = get_Prediction(file_path)
 
             print(result)
             remove_user_folder(session['user_id'])
@@ -65,38 +63,33 @@ def upload_image():
 
     return jsonify({"error": "Invalid file type. Only images are allowed."}), 400
 
-def get_Prediction(test_data, file_path):
-    cfg = get_cfg()
-    cfg.merge_from_file("/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/config_finetune.yml")
-    cfg.MODEL.WEIGHTS = "/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/model_finetune.pth"
-    predictor = DefaultPredictor(cfg)
+def get_Prediction(file_path):
+    model = YOLO("/home/tdubuntu/Desktop/AI_Flask/YoloV8_Model/AI_Model_YoloV8.pt")  #model
+    results = model(file_path)  #input from app
 
-    im = cv2.imread(test_data[0]["testpic"])
-    if im is not None:
-        new_width = 640
-        new_height = 640
-        resized_image = cv2.resize(im, (new_width, new_height))
+    result = results[0]
 
-    outputs = predictor(resized_image)
-    class_ids = outputs["instances"].pred_classes
-
-    #Calling class_mapper class to sort the id into name
-    class_mapper = ClassMapper()
-
-    mapped_result = class_mapper.map_classes(class_ids)
-
-    # print("This is some",Banknote_ID)
-    if mapped_result == None:
+    if len(result.boxes) == 0:
         #Removed file after image processing is comeplete
         os.remove(file_path)
         
         return "Can't detect Banknotes"
 
     else: 
+        box = result.boxes[0]
+        class_id = box.cls[0].item()
+        # print("Class Item: ", round(class_id))
+
+        #Calling class_mapper class to sort the id into name
+        class_mapper = ClassMapper()
+        mapped_result = class_mapper.map_classes(round(class_id))
+        # print("The Result: ", mapped_result)
+        
         #Removed file after image processing is comeplete
         os.remove(file_path)
         
         return mapped_result
+
 
 def remove_user_folder(user_id):
     folder_path = os.path.join(base_folder_path, user_id)
