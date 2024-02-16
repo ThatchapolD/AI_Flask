@@ -20,7 +20,6 @@ def load_alphabets() -> dict:
   30: 'U', 31: 'V', 32: 'W', 33: 'X', 34: 'Y', 35: 'Z'}
   class_mapping_thai = {}
   return class_mapping,class_mapping_thai
- 
 
 def ocr(x: NDArray)-> str:
     loaded_model = load_model("../OCR_Model/model.h5")
@@ -34,8 +33,7 @@ def ocr(x: NDArray)-> str:
     true_out = ''.join(decoded_out)
     print(true_out)
 
-    
-
+    return true_out
 
 if __name__ == '__main__':
   ocr(1) 

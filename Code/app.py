@@ -3,9 +3,10 @@ import os
 import shutil
 
 # For Image Proc
-import torch 
+# import torch 
 from ultralytics import YOLO
 from class_Mapper import ClassMapper
+from test_OCR import Serial_Sig
 
 # Flask stuff
 from flask import Flask, request, jsonify, session
@@ -53,11 +54,18 @@ def upload_image():
             result = get_Prediction(file_path)
 
             print(result)
+
+            Serial_Detection = Serial_Sig(file_path)
+            Serial_Num_Result = Serial_Detection.Serial_Num(result)
+
+            print(Serial_Num_Result)
+
+            os.remove(file_path)
             remove_user_folder(session['user_id'])
             # torch.cuda.empty_cache()
             # Send the result back to the app
             return jsonify({"BanknoteID": result},
-                           {"Serial_Number": "TBA"},
+                           {"Serial_Number": Serial_Num_Result},
                            {"MF_Sig": "TBA"},
                            {"BOT_Sig": "TBA"},)
 
@@ -89,7 +97,7 @@ def get_Prediction(file_path):
         # print("The Result: ", mapped_result)
         
         #Removed file after image processing is comeplete
-        os.remove(file_path)
+        # os.remove(file_path)
         
         return mapped_result
 

@@ -95,16 +95,15 @@ def slicer(img: NDArray[uint8], start: tuple, end: tuple)-> NDArray[uint8]:
     img_show = img[start[1]*height_sec_size:end[1]*height_sec_size,start[0]*width_sec_size:end[0]*width_sec_size,  :]
     
     return img_show
-    
-    
+
 
 def coordinate_dict() -> dict:
     coor_list = {
-        "5gen11front" : ((3,2),(8,4),(12,16),(17,19)),
-        "10gen11front" : ((3,2),(8,4),(12,16),(17,19)),
-        "20gen11front" : ((3,2),(8,4),(12,16),(17,19)),
-        "100gen11front" : ((3,2),(8,4),(12,16),(17,19)),
-        "500gen11front" : ((3,2),(8,4),(12,16),(17,19))
+        "5Gen11" : ((3,2),(8,4),(12,16),(17,19)),
+        "10Gen11" : ((3,2),(8,4),(12,16),(17,19)),
+        "20Gen11" : ((3,2),(8,4),(12,16),(17,19)),
+        "100Gen11" : ((3,2),(8,4),(12,16),(17,19)),
+        "500Gen11" : ((3,2),(8,4),(12,16),(17,19))
         }
     return coor_list
 
