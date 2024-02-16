@@ -3,6 +3,7 @@ import os
 import shutil
 
 # For Image Proc
+import torch 
 from ultralytics import YOLO
 from class_Mapper import ClassMapper
 
@@ -48,10 +49,12 @@ def upload_image():
         
         if os.path.isfile(file_path):
             # test_data = [{'testpic': file_path}] #input image
+            # torch.no_grad()
             result = get_Prediction(file_path)
 
             print(result)
             remove_user_folder(session['user_id'])
+            # torch.cuda.empty_cache()
             # Send the result back to the app
             return jsonify({"BanknoteID": result},
                            {"Serial_Number": "TBA"},
