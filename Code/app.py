@@ -51,7 +51,6 @@ def upload_image():
         filename = photos.save(file, folder=session['user_id'])
         
         if os.path.isfile(file_path):
-            # test_data = [{'testpic': file_path}] #input image
             # torch.no_grad()
             result = get_Prediction(file_path)
 
@@ -77,7 +76,6 @@ def upload_image():
 
 def get_Prediction(file_path):
     results = model(file_path)  #input from app
-
     result = results[0]
 
     if len(result.boxes) == 0:
