@@ -3,7 +3,7 @@ import os
 import shutil
 
 # For Image Proc
-# import torch 
+import torch 
 from ultralytics import YOLO
 from class_Mapper import ClassMapper
 from test_OCR import Serial_Sig
@@ -23,6 +23,9 @@ base_folder_path = '/home/tdubuntu/Desktop/AI_Flask/uploads'
 app.config["UPLOADED_PHOTOS_DEST"] = base_folder_path
 photos = UploadSet("photos", IMAGES)
 configure_uploads(app, photos)
+
+# Load the yolo Model
+model = YOLO("/home/tdubuntu/Desktop/AI_Flask/YoloV8_Model/AI_Model_YoloV8.pt")  #model
 
 @app.route("/test")
 def hello_world():
@@ -46,7 +49,6 @@ def upload_image():
 
         file_path = os.path.join(folder_path, file.filename)
         filename = photos.save(file, folder=session['user_id'])
-        size = len(file.read())
         
         if os.path.isfile(file_path):
             # test_data = [{'testpic': file_path}] #input image
@@ -55,17 +57,16 @@ def upload_image():
 
             print(result)
 
-            Serial_Detection = Serial_Sig(file_path)
-            Serial_Num_Result = Serial_Detection.Serial_Num(result)
-
-            print(Serial_Num_Result)
+            # For Serial Number and Signature detection 
+            # Serial_Detection = Serial_Sig(file_path)
+            # Serial_Num_Result = Serial_Detection.Serial_Num(result)
+            # print(Serial_Num_Result)
 
             os.remove(file_path)
             remove_user_folder(session['user_id'])
-            # torch.cuda.empty_cache()
             # Send the result back to the app
             return jsonify({"BanknoteID": result},
-                           {"Serial_Number": Serial_Num_Result},
+                           {"Serial_Number": "Done"},
                            {"MF_Sig": "TBA"},
                            {"BOT_Sig": "TBA"},)
 
@@ -75,15 +76,15 @@ def upload_image():
     return jsonify({"error": "Invalid file type. Only images are allowed."}), 400
 
 def get_Prediction(file_path):
-    model = YOLO("/home/tdubuntu/Desktop/AI_Flask/YoloV8_Model/AI_Model_YoloV8.pt")  #model
     results = model(file_path)  #input from app
 
     result = results[0]
 
     if len(result.boxes) == 0:
         #Removed file after image processing is comeplete
-        os.remove(file_path)
+        # os.remove(file_path)
         
+        torch.cuda.empty_cache()
         return "Can't detect Banknotes"
 
     else: 
@@ -98,6 +99,7 @@ def get_Prediction(file_path):
         
         #Removed file after image processing is comeplete
         # os.remove(file_path)
+        torch.cuda.empty_cache()
         
         return mapped_result
 

@@ -1,8 +1,8 @@
 from ultralytics import YOLO
 from class_Mapper import ClassMapper
 
-model = YOLO("/home/tdubuntu/Desktop/AI_Flask/YoloV8_Model/AI_Model_YoloV8.pt")  #model
-results = model('/home/tdubuntu/Desktop/AI_Flask/Yaml_and_Friend/IMG_2565.jpg')  #input from app
+model = YOLO("YoloV8_Model/AI_Model_YoloV8.pt")  #model
+results = model('Test_Picture/IMG_2433.jpg')  #input from app
 
 result = results[0]
 
