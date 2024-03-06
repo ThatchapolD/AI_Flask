@@ -6,6 +6,7 @@ import shutil
 import torch 
 from ultralytics import YOLO
 from class_Mapper import ClassMapper
+from final_Class_Mapper import Final_Class
 from test_OCR import Serial_Sig
 
 # Flask stuff
@@ -25,7 +26,7 @@ photos = UploadSet("photos", IMAGES)
 configure_uploads(app, photos)
 
 # Load the yolo Model
-model = YOLO("/home/tdubuntu/Desktop/AI_Flask/YoloV8_Model/AI_Model_YoloV8.pt")  #model
+model = YOLO("/home/tdubuntu/Desktop/AI_Flask/YoloV8_Model/YoloV8_MkIII.pt")  #model
 
 @app.route("/test")
 def hello_world():
@@ -52,9 +53,17 @@ def upload_image():
         
         if os.path.isfile(file_path):
             # torch.no_grad()
-            result = get_Prediction(file_path)
+            og_result = get_Prediction(file_path)
 
-            print(result)
+            class_mapper = ClassMapper()
+            result = class_mapper.map_classes(og_result)
+
+            print("OG Result",result)
+
+            final_Mapper = Final_Class()
+            final_Result = final_Mapper.map_classes(og_result)
+
+            print("Final Result", final_Result)
 
             # For Serial Number and Signature detection 
             # Serial_Detection = Serial_Sig(file_path)
@@ -64,7 +73,7 @@ def upload_image():
             os.remove(file_path)
             remove_user_folder(session['user_id'])
             # Send the result back to the app
-            return jsonify({"BanknoteID": result},
+            return jsonify({"BanknoteID": final_Result},
                            {"Serial_Number": "Done"},
                            {"MF_Sig": "TBA"},
                            {"BOT_Sig": "TBA"},)
@@ -90,16 +99,17 @@ def get_Prediction(file_path):
         class_id = box.cls[0].item()
         # print("Class Item: ", round(class_id))
 
-        #Calling class_mapper class to sort the id into name
-        class_mapper = ClassMapper()
-        mapped_result = class_mapper.map_classes(round(class_id))
-        # print("The Result: ", mapped_result)
+        # #Calling class_mapper class to sort the id into name
+        # class_mapper = ClassMapper()
+        # mapped_result = class_mapper.map_classes(round(class_id))
+        # # print("The Result: ", mapped_result)
         
         #Removed file after image processing is comeplete
         # os.remove(file_path)
         torch.cuda.empty_cache()
         
-        return mapped_result
+        # return mapped_result
+        return round(class_id)
 
 
 def remove_user_folder(user_id):
