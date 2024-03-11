@@ -26,7 +26,7 @@ photos = UploadSet("photos", IMAGES)
 configure_uploads(app, photos)
 
 # Load the yolo Model
-model = YOLO("/home/tdubuntu/Desktop/AI_Flask/YoloV8_Model/YoloV8_MkIII.pt")  #model
+model = YOLO("/home/tdubuntu/Desktop/AI_Flask/YoloV8_Model/YoloV8_MkV.pt")  #model
 
 @app.route("/test")
 def hello_world():
@@ -54,6 +54,7 @@ def upload_image():
         if os.path.isfile(file_path):
             # torch.no_grad()
             og_result = get_Prediction(file_path)
+            print("Class Number",og_result)
 
             class_mapper = ClassMapper()
             result = class_mapper.map_classes(og_result)
@@ -64,6 +65,9 @@ def upload_image():
             final_Result = final_Mapper.map_classes(og_result)
 
             print("Final Result", final_Result)
+
+            if final_Result == None:
+                final_Result = "Can't Detect Banknotes"
 
             # For Serial Number and Signature detection 
             # Serial_Detection = Serial_Sig(file_path)

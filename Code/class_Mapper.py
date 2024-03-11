@@ -22,7 +22,8 @@ class ClassMapper:
             68: 'memo_2554front', 69: 'memo_2555_100back', 70: 'memo_2555_80back', 
             71: 'memo_2555_80front', 72: 'memo_2558back', 73: 'memo_2559_500back', 
             74: 'memo_2559_70back', 75: 'memo_2559_70front', 76: 'memo_2562_1000back', 
-            77: 'memo_2562_1000front', 78: 'memo_2562_100back', 79: 'memo_2562_100front'
+            77: 'memo_2562_1000front', 78: 'memo_2562_100back', 79: 'memo_2562_100front',
+            80: 'memo_2545_100back', 81: 'memo_2545_100front'
         }
 
     def map_classes(self, class_ids):
