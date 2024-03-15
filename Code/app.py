@@ -7,7 +7,7 @@ import torch
 from ultralytics import YOLO
 from class_Mapper import ClassMapper
 from final_Class_Mapper import Final_Class
-from test_OCR import Serial_Sig
+from Sig_Serial import *
 
 # Flask stuff
 from flask import Flask, request, jsonify, session
@@ -67,17 +67,21 @@ def upload_image():
             class_mapper = ClassMapper()
             result = class_mapper.map_classes(og_result)
 
-            print("OG Result",result)
+            # print("OG Result",result)
 
             final_Mapper = Final_Class()
             final_Result = final_Mapper.map_classes(og_result)
 
-            print("Final Result", final_Result)
+            # print("Final Result", final_Result)
 
             # For Serial Number and Signature detection 
-            # Serial_Detection = Serial_Sig(file_path)
-            # Serial_Num_Result = Serial_Detection.Serial_Num(result)
-            # print(Serial_Num_Result)
+            img = cv2.imread(file_path)
+            listo = run(img,result)
+            # print(listo)
+           
+            print("OG Result: ",result)
+            print("Final Result", final_Result)
+            print(listo)
 
             os.remove(file_path)
             remove_user_folder(session['user_id'])
