@@ -75,13 +75,13 @@ def upload_image():
             # print("Final Result", final_Result)
 
             # For Serial Number and Signature detection 
-            img = cv2.imread(file_path)
-            listo = run(img,result)
+            # img = cv2.imread(file_path)
+            # listo = run(img,result)
             # print(listo)
            
-            print("OG Result: ",result)
-            print("Final Result", final_Result)
-            print(listo)
+            # print("OG Result: ",result)
+            # print("Final Result", final_Result)
+            # print(listo)
 
             os.remove(file_path)
             remove_user_folder(session['user_id'])
